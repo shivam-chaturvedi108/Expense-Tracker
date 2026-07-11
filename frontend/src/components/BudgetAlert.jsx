@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../api";
 import { AlertTriangle } from 'lucide-react';
 
 const BudgetAlert = () => {
@@ -13,8 +13,8 @@ const BudgetAlert = () => {
                 const year = now.getFullYear();
 
                 const [budgetRes, reportRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/budgets'),
-                    axios.get(`http://localhost:5000/api/reports?month=${month}&year=${year}`)
+                    api.get('/api/budgets'),
+                    api.get(`/api/reports?month=${month}&year=${year}`)
                 ]);
 
                 const budgets = budgetRes.data.filter(b => b.month === month && b.year === year);

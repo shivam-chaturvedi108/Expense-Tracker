@@ -15,7 +15,7 @@ const pool = mysql.createPool({
     connectTimeout: 30000
 });
 
-// Test connection
+
 pool.getConnection()
     .then(connection => {
         console.log('Successfully connected to the MySQL Database.');

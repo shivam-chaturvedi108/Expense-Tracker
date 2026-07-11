@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../api";
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -27,7 +27,7 @@ const Dashboard = () => {
         const fetchReport = async () => {
             try {
                 const now = new Date();
-                const res = await axios.get(`http://localhost:5000/api/reports?month=${now.getMonth() + 1}&year=${now.getFullYear()}`);
+                const res = await api.get(`/api/reports?month=${now.getMonth() + 1}&year=${now.getFullYear()}`);
                 setReport(res.data);
                 setLoading(false);
             } catch (err) {

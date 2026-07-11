@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../api";
 import { Download, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -16,8 +16,8 @@ const Reports = () => {
         const fetchAll = async () => {
             try {
                 const [rRes, tRes] = await Promise.all([
-                    axios.get(`http://localhost:5000/api/reports?month=${month}&year=${year}`),
-                    axios.get('http://localhost:5000/api/transactions')
+                    api.get(`/api/reports?month=${month}&year=${year}`),
+                    api.get('/api/transactions')
                 ]);
                 setReportData(rRes.data);
                 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../api";
 import { Plus, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import BudgetAlert from '../components/BudgetAlert';
 
@@ -18,8 +18,8 @@ const Transactions = () => {
     const fetchData = async () => {
         try {
             const [txRes, catRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/transactions'),
-                axios.get('http://localhost:5000/api/categories')
+                api.get('/api/transactions'),
+                api.get('/api/categories')
             ]);
             setTransactions(txRes.data);
             setCategories(catRes.data);
@@ -37,7 +37,7 @@ const Transactions = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/transactions', {
+            await api.post('/api/transactions', {
                 type,
                 amount: parseFloat(amount),
                 category_id: categoryId,
@@ -55,7 +55,7 @@ const Transactions = () => {
 
     const handleDelete = async (id, txType) => {
         try {
-            await axios.delete(`http://localhost:5000/api/transactions/${id}?type=${txType}`);
+            await api.delete(`/api/transactions/${id}?type=${txType}`);
             fetchData();
         } catch (err) {
             console.error(err);

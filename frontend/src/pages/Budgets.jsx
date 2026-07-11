@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../api";
 import { Target, Trash2 } from 'lucide-react';
 
 const Budgets = () => {
@@ -14,8 +14,8 @@ const Budgets = () => {
     const fetchData = async () => {
         try {
             const [bRes, cRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/budgets'),
-                axios.get('http://localhost:5000/api/categories')
+                    api.get('/api/budgets'),
+                    api.get('/api/categories')
             ]);
             setBudgets(bRes.data);
             setCategories(cRes.data.filter(c => c.type === 'expense'));
@@ -31,7 +31,7 @@ const Budgets = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/budgets', {
+            await       api.post('/api/budgets', {
                 category_id: categoryId,
                 amount: parseFloat(amount),
                 month: currentMonth,
@@ -47,7 +47,7 @@ const Budgets = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/budgets/${id}`);
+            await       api.delete(`/api/budgets/${id}`);
             fetchData();
         } catch (err) {
             console.error(err);

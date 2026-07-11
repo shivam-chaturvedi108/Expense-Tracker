@@ -1,5 +1,6 @@
-import api from "../api";
+import axios from "axios";
 
-export default api.create({
+export default axios.create({
     baseURL: "https://expense-tracker-8v57.onrender.com",
 });
+export default api;

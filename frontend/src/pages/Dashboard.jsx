@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { ArrowUpRight, ArrowDownRight, IndianRupee } from 'lucide-react';
+import BudgetAlert from '../components/BudgetAlert';
 
 ChartJS.register(
   CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement
@@ -21,26 +22,39 @@ ChartJS.register(
 
 const Dashboard = () => {
     const [report, setReport] = useState(null);
+    const [totalBudget, setTotalBudget] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchReport = async () => {
+        const fetchData = async () => {
             try {
                 const now = new Date();
-                const res = await api.get(`/api/reports?month=${now.getMonth() + 1}&year=${now.getFullYear()}`);
-                setReport(res.data);
+                const month = now.getMonth() + 1;
+                const year = now.getFullYear();
+                
+                const [reportRes, budgetRes] = await Promise.all([
+                    api.get(`/api/reports?month=${month}&year=${year}`),
+                    api.get('/api/budgets')
+                ]);
+                
+                setReport(reportRes.data);
+                
+                const budgets = budgetRes.data.filter(b => b.month === month && b.year === year);
+                const budgetSum = budgets.reduce((acc, b) => acc + parseFloat(b.amount), 0);
+                setTotalBudget(budgetSum);
+                
                 setLoading(false);
             } catch (err) {
                 console.error(err);
                 setLoading(false);
             }
         };
-        fetchReport();
+        fetchData();
     }, []);
 
     if (loading) return <div className="text-center py-10">Loading dashboard...</div>;
 
-    const balance = report ? (report.total_income - report.total_expenses) : 0;
+    const remainingBudget = totalBudget - (report ? report.total_expenses : 0);
 
     const doughnutData = {
         labels: report?.category_breakdown?.map(c => c.category) || [],
@@ -68,12 +82,12 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-card border border-border p-6 rounded-2xl shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-muted-foreground font-medium">Total Balance</h3>
+                        <h3 className="text-muted-foreground font-medium">Remaining Budget</h3>
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             <IndianRupee size={20} />
                         </div>
                     </div>
-                    <p className="text-3xl font-bold text-foreground">₹{balance.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-foreground">₹{Math.max(0, remainingBudget).toLocaleString()}</p>
                 </div>
                 
                 <div className="bg-card border border-border p-6 rounded-2xl shadow-sm">
@@ -108,11 +122,9 @@ const Dashboard = () => {
                         <p className="text-muted-foreground text-center py-10">No expense data for this month.</p>
                     )}
                 </div>
-                <div className="bg-card border border-border p-6 rounded-2xl shadow-sm flex flex-col justify-center items-center">
-                   <h3 className="text-lg font-semibold mb-6 self-start">Recent Alerts</h3>
-                   <div className="w-full text-center text-muted-foreground">
-                        No recent alerts. Great job keeping your expenses under budget!
-                   </div>
+                <div className="bg-card border border-border p-6 rounded-2xl shadow-sm flex flex-col justify-start">
+                   <h3 className="text-lg font-semibold mb-6">Recent Alerts</h3>
+                   <BudgetAlert />
                 </div>
             </div>
         </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from "../api";
 import { Plus, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
-import BudgetAlert from '../components/BudgetAlert';
 
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
@@ -64,8 +63,6 @@ const Transactions = () => {
 
     return (
         <div>
-            <BudgetAlert />
-            
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Transactions</h2>
                 <button 

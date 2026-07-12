@@ -50,10 +50,16 @@ const BudgetAlert = () => {
         fetchAlerts();
     }, []);
 
-    if (alerts.length === 0) return null;
+    if (alerts.length === 0) {
+        return (
+            <div className="w-full text-center text-muted-foreground py-4">
+                No recent alerts. Great job keeping your expenses under budget!
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-4 mb-6">
+        <div className="space-y-4">
             {alerts.map((alert, idx) => (
                 <div key={idx} className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl flex items-start gap-3">
                     <AlertTriangle className="mt-0.5" size={20} />
